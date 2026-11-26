@@ -9,6 +9,9 @@
   --color-ink: #fff5f6;
   --color-muted: #f2ccd1;
   --color-tint: #852a39;
+  --color-sunrise: #ffbb88;
+  --color-sunrise-hover: #ffcea9;
+  --color-sunrise-ink: #42111d;
 }
 
 body {
@@ -55,12 +58,7 @@ body {
   }
 
   .app-nav button {
-    @apply min-h-10 flex-row gap-2 px-3;
-  }
-
-  .app-nav button,
-  .app-nav button[aria-current="page"] {
-    @apply text-white hover:bg-white/10;
+    @apply min-h-10 flex-row gap-2 px-3 text-[#815016] hover:bg-[#fff2e6] focus-visible:outline-[#815016];
   }
 
   .app-nav button svg {
@@ -68,7 +66,7 @@ body {
   }
 
   .app-nav button[aria-current="page"] {
-    box-shadow: inset 0 -2px white;
+    @apply bg-[#ffdeb9] text-[#73420d] hover:bg-[#ffd1a2];
   }
 
   .app-frame {

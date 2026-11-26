@@ -84,8 +84,8 @@ export function RideApp() {
         if (next === "messages" && !activeDriver) selectDriver(drivers[0]);
         navigate(next);
       }} />
-      <main className="min-w-0 flex-1">
-        <div className="shell py-6 sm:py-9">
+      <main className="min-w-0 flex-1 bg-[radial-gradient(ellipse_at_top_left,#9c263e_0%,#661326_32%,#500000_68%)]">
+        <div className="shell py-7 sm:py-10">
           <div role="status">{notice && <p className="mb-4 rounded-xl bg-tint px-4 py-3 text-muted">{notice}</p>}</div>
 
           {section !== "find" && (
@@ -93,17 +93,17 @@ export function RideApp() {
           )}
 
           {section === "find" && (
-            <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,25rem)_minmax(0,1fr)] lg:gap-x-8 lg:gap-y-6">
+            <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,27rem)_minmax(0,1fr)] lg:gap-x-8 lg:gap-y-6">
               <div className="min-w-0 lg:col-start-1 lg:row-start-1">
-                <div className="mb-5">
-                  <h1 id="screen-title" tabIndex={-1} className="text-3xl font-bold tracking-tight sm:text-4xl">Find a ride</h1>
-                  <p className="mt-2 text-sm text-muted">Search demo carpools from College Station.</p>
+                <div className="mb-6">
+                  <h1 id="screen-title" tabIndex={-1} className="text-4xl leading-[1.04] font-bold tracking-tight sm:text-5xl">Find your next ride</h1>
+                  <p className="mt-2 text-sm text-muted">Find a demo carpool leaving College Station.</p>
                 </div>
                 <RideSearch filters={draft} onChange={setDraft} onSearch={() => applyFilters(draft)} onClear={clearFilters} />
-                <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Filter by destination">
+                <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by destination">
                   {["", ...new Set(rides.map((ride) => ride.destination))].map((destination) => (
                     <button key={destination} type="button" aria-pressed={filters.destination === destination}
-                      className="cursor-pointer rounded-full border border-line bg-surface px-3 py-2 text-sm font-medium text-muted hover:border-muted hover:text-muted aria-pressed:border-muted aria-pressed:bg-hover aria-pressed:text-white"
+                      className="cursor-pointer rounded-full border border-line bg-surface px-3 py-2 text-sm font-medium text-muted hover:border-muted hover:text-muted aria-pressed:border-sunrise aria-pressed:bg-sunrise aria-pressed:text-sunrise-ink"
                       onClick={() => applyFilters({ ...filters, destination })}>
                       {destination || "All rides"}
                     </button>

@@ -12,9 +12,9 @@ export type Section = (typeof sections)[number]["id"];
 
 export function Navigation({ active, onNavigate }: { active: Section; onNavigate: (section: Section) => void }) {
   return (
-    <header className="border-b border-maroon bg-maroon text-white">
+    <header className="border-b border-line" style={{ backgroundColor: "#fff", color: "#500000" }}>
       <div className="shell flex min-h-14 items-center justify-between gap-4">
-        <button className="inline-flex cursor-pointer items-center gap-2 focus-visible:outline-white text-lg font-bold tracking-tight text-white" onClick={() => onNavigate("find")}>
+        <button className="inline-flex cursor-pointer items-center gap-2 text-lg font-bold tracking-tight focus-visible:outline-maroon" onClick={() => onNavigate("find")}>
           <CarFront size={20} aria-hidden="true" />
           AggieRide
         </button>

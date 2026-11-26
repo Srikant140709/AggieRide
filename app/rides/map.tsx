@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Route } from "lucide-react";
-import type { GeoJSONSource, Map as MapLibreMap, Marker } from "maplibre-gl";
-import type { DemoRide } from "./types";
+import type { GeoJSONSource, Map as MapLibreMap, MapMouseEvent, Marker } from "maplibre-gl";
+import type { Coordinates, DemoRide } from "./types";
 import { collegeStation } from "./demo";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -27,6 +27,8 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
   const container = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<MapStatus>("loading");
   const [attempt, setAttempt] = useState(0);
+  const [measuring, setMeasuring] = useState(false);
+  const [points, setPoints] = useState<Coordinates[]>([]);
   const [mapSession, setMapSession] = useState<{
     map: MapLibreMap;
     library: typeof import("maplibre-gl");
@@ -46,21 +48,20 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
     let workerUrl: string | undefined;
     let version: string | undefined;
 
-    function logFailure(stage: string, error?: unknown, recoverable = false) {
+    function logFailure(stage: string, error?: unknown) {
       if (process.env.NODE_ENV !== "development") return;
       const details = {
         error, version, styleUrl, workerUrl, styleReady,
         width: mapElement.clientWidth, height: mapElement.clientHeight,
         sources: map?.getStyle()?.sources,
       };
-      if (recoverable) console.warn(`[AggieRide map] ${stage}`, details);
-      else console.error(`[AggieRide map] ${stage}`, details);
+      console.warn(`[AggieRide map] ${stage}`, details);
     }
 
     function watchForLoad() {
       window.clearTimeout(loadTimer);
       loadTimer = window.setTimeout(() => {
-        logFailure("Timed out waiting for the basemap");
+        logFailure(styleReady ? "Timed out waiting for a visible map frame" : "Timed out loading the map style");
         setStatus("load-failed");
       }, 15000);
     }
@@ -93,12 +94,13 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
 
         watchForLoad();
         instance.on("error", ({ error }) => {
-          logFailure(styleReady ? "Map resource error" : "Error while loading the style", error, styleReady);
+          logFailure(styleReady ? "Map resource error" : "Error while loading the style", error);
           if (!styleReady && !contextLost) setStatus("load-failed");
         });
         instance.on("webglcontextlost", () => {
           contextLost = true;
           styleReady = false;
+          instance.off("render", markReady);
           window.clearTimeout(loadTimer);
           logFailure("WebGL context lost");
           setStatus("context-lost");
@@ -107,11 +109,12 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
           contextLost = false;
           setStatus("loading");
           watchForLoad();
-          // MapLibre rebuilds the style after restoring the graphics context.
-          instance.once("idle", markReady);
+          // The rebuilt style will start the first-frame check again.
         });
         instance.on("style.load", () => {
           styleReady = true;
+          // A visible frame can be drawn while individual tiles are still loading.
+          instance.on("render", markReady);
           if (instance.getSource(routeSource)) return;
 
           instance.addSource(routeSource, {
@@ -129,12 +132,13 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
         });
 
         function markReady() {
-          if (contextLost || !styleReady) return;
+          const canvas = instance.getCanvas();
+          if (contextLost || !styleReady || !canvas.clientWidth || !canvas.clientHeight) return;
+          instance.off("render", markReady);
           window.clearTimeout(loadTimer);
           setStatus("ready");
         }
 
-        instance.once("load", markReady);
       } catch (error) {
         logFailure("Could not initialize MapLibre or WebGL", error);
         window.clearTimeout(loadTimer);
@@ -202,11 +206,45 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
     };
   }, [mapSession, rides, selectedRide, initialSearch]);
 
+  useEffect(() => {
+    if (!mapSession || !measuring) return;
+    const { map } = mapSession;
+
+    function selectPoint(event: MapMouseEvent) {
+      const { lng, lat } = event.lngLat.wrap();
+      addPoint([lng, lat]);
+    }
+
+    map.on("click", selectPoint);
+    return () => { map.off("click", selectPoint); };
+  }, [mapSession, measuring]);
+
+  useEffect(() => {
+    if (!mapSession) return;
+    const { map, library } = mapSession;
+    const markers = points.map((point, index) => {
+      const label = document.createElement("span");
+      label.className = "ride-map-marker";
+      label.textContent = index === 0 ? "A" : "B";
+      label.title = `Measurement point ${label.textContent}`;
+      return new library.Marker({ element: label }).setLngLat(point).addTo(map);
+    });
+    return () => { markers.forEach((marker) => marker.remove()); };
+  }, [mapSession, points]);
+
+  function addPoint(point: Coordinates) {
+    setPoints((current) => current.length === 2 ? [point] : [...current, point]);
+  }
+
+  const distance = mapSession && points.length === 2
+    ? mapSession.library.LngLat.convert(points[0]).distanceTo(mapSession.library.LngLat.convert(points[1]))
+    : undefined;
+
   return (
-    <aside className="panel overflow-hidden" aria-labelledby="ride-map-title">
+    <aside className="panel overflow-hidden shadow-lg shadow-black/15" aria-labelledby="ride-map-title">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
         <h2 id="ride-map-title" className="flex items-center gap-2 font-bold">
-          <Route size={18} className="text-muted" aria-hidden="true" /> Ride map
+          <Route size={18} className="text-sunrise" aria-hidden="true" /> Ride map
         </h2>
         <div className="flex flex-wrap gap-3 text-xs font-semibold text-muted">
           <span className="flex items-center gap-1.5"><span className="size-2 rounded-full border border-muted bg-hover" /> Pickup</span>
@@ -226,6 +264,26 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
                 setAttempt((current) => current + 1);
               }}>Retry map</button>
             )}
+          </div>
+        )}
+      </div>
+      <div className="border-t border-line px-5 py-3">
+        <button className="secondary" type="button" disabled={!mapSession} aria-pressed={measuring}
+          onClick={() => { setMeasuring(!measuring); setPoints([]); }}>
+          {measuring ? "Close measurement" : "Measure distance"}
+        </button>
+        {measuring && (
+          <div className="mt-3 space-y-2">
+            <p className="text-sm text-muted" role="status">
+              {distance === undefined
+                ? `Tap or click point ${points.length === 0 ? "A" : "B"} on the map.`
+                : `${(distance / 1609.344).toLocaleString("en-US", { maximumFractionDigits: 2 })} mi / ${(distance / 1000).toLocaleString("en-US", { maximumFractionDigits: 2 })} km straight-line distance. Select another point to start over.`}
+            </p>
+            <button className="secondary" type="button" disabled={!mapSession} onClick={() => {
+              if (!mapSession) return;
+              const { lng, lat } = mapSession.map.getCenter().wrap();
+              addPoint([lng, lat]);
+            }}>Use map center as point {points.length === 1 ? "B" : "A"}</button>
           </div>
         )}
       </div>

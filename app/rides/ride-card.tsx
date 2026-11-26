@@ -30,14 +30,14 @@ export function RideCard({ ride, onView, onMessage, previewed, onPreview }: {
   onMessage: (driver: Driver) => void;
 }) {
   return (
-    <article className={`panel p-4 ${previewed ? "border-muted ring-1 ring-muted" : ""}`}>
+    <article className={`panel p-4 ${previewed ? "border-sunrise ring-1 ring-sunrise" : ""}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-lg font-bold tracking-tight">To {ride.destination}</h3>
           <p className="mt-0.5 text-sm text-muted">From {ride.pickup}</p>
         </div>
         <div className="shrink-0 text-right">
-          <p className="text-lg font-bold tabular-nums text-ink">${ride.expenseShare}</p>
+          <p className="text-lg font-bold tabular-nums text-sunrise">${ride.expenseShare}</p>
           <p className="text-xs text-muted">est. per person</p>
         </div>
       </div>
