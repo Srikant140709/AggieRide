@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-maroon: #500000;
+  --color-line: #eaeaea;
+  --color-offwhite: #f6f5f3;
+  --color-ink: #111111;
+  --color-muted: #595551;
+  --color-tint: #f6eded;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-offwhite);
+  color: var(--color-ink);
+  font-family: system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-maroon);
+  outline-offset: 3px;
+}
+
+.app-frame {
+  @apply flex min-h-dvh flex-col;
+  padding-block-end: calc(4.25rem + env(safe-area-inset-bottom));
+}
+
+.shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.panel {
+  @apply rounded-2xl border border-line bg-white shadow-sm;
+}
+
+.app-nav {
+  @apply fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-line bg-white;
+  padding-block-end: env(safe-area-inset-bottom);
+}
+
+.app-nav button {
+  @apply flex min-h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-1 text-center text-[0.6875rem] font-semibold text-muted hover:bg-offwhite sm:text-sm;
+}
+
+.app-nav button[aria-current="page"] {
+  @apply bg-tint text-maroon;
+}
+
+@media (min-width: 64rem) {
+  .app-nav {
+    @apply static flex gap-1 border-0 p-0;
+  }
+
+  .app-nav button {
+    @apply min-h-10 flex-row gap-2 px-3;
+  }
+
+  .app-frame {
+    padding-block-end: 0;
+  }
+}
+
+.primary,
+.secondary {
+  @apply inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-default disabled:opacity-50;
+}
+
+.primary {
+  @apply bg-maroon text-white hover:bg-[#6a0000] disabled:hover:bg-maroon;
+}
+
+.secondary {
+  @apply border border-line bg-white text-ink hover:bg-offwhite;
+}
+
+.field-label {
+  @apply block min-w-0 text-sm font-semibold;
+}
+
+.field {
+  @apply flex min-h-11 min-w-0 items-center gap-2 rounded-lg border border-line bg-offwhite px-3 text-ink focus-within:border-maroon;
+}
+
+.field-label .field {
+  @apply mt-1.5;
+}
+
+.field input,
+.field select {
+  @apply min-w-0 flex-1 bg-transparent py-2 text-base font-normal;
+}
+
+.field select {
+  @apply appearance-none;
+}
+
+.field svg {
+  @apply size-4 shrink-0 text-muted;
+}
+
+@media (max-width: 39.99rem) {
+  .field input:is([type="date"], [type="time"]) {
+    padding-inline: 0;
+  }
+
+  .field:has(input:is([type="date"], [type="time"])) > svg {
+    display: none;
+  }
+}
+
+.ride-map {
+  position: relative;
+  isolation: isolate;
+  height: clamp(17rem, 52vw, 30rem);
+  background: var(--color-offwhite);
+}
+
+.ride-map-marker {
+  @apply whitespace-nowrap rounded-full border border-maroon bg-white px-2.5 py-1 text-xs font-semibold text-maroon shadow-sm;
+}
+
+.ride-map-marker[data-role="Pickup"],
+.ride-map-marker[data-selected="true"] {
+  @apply bg-maroon text-white;
+}
+
+.ride-map-marker[data-selected="true"] {
+  @apply z-10 ring-2 ring-white;
+}
+
+.ride-map .maplibregl-ctrl-attrib {
+  max-width: 100%;
+}
+
+.ride-dialog {
+  @apply fixed inset-0 m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto p-5 sm:p-6;
+}
+
+.ride-dialog::backdrop {
+  background: rgb(17 17 17 / 50%);
 }
