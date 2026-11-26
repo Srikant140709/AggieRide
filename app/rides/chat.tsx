@@ -13,7 +13,7 @@ export function Chat({ drivers, active, conversations, onSelect, onSend }: {
     <div className="grid gap-4 md:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="panel self-start p-3" aria-label="Conversations">
         {drivers.map((driver) => (
-          <button key={driver.id} aria-pressed={active?.id === driver.id} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left font-semibold hover:bg-offwhite aria-pressed:bg-tint aria-pressed:text-maroon" onClick={() => onSelect(driver)}>
+          <button key={driver.id} aria-pressed={active?.id === driver.id} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left font-semibold hover:bg-inset aria-pressed:bg-tint aria-pressed:text-muted" onClick={() => onSelect(driver)}>
             <MessageCircle size={17} aria-hidden="true" /> {driver.name}
           </button>
         ))}
@@ -42,11 +42,11 @@ function Thread({ driver, messages, onSend }: {
         <h2 className="font-bold">{driver.name}</h2>
         <p className="mt-1 text-sm text-muted">Demo chat · Messages stay in this session.</p>
       </div>
-      <div ref={history} role="log" aria-label={`Messages with ${driver.name}`} className="flex h-72 flex-col gap-3 overflow-y-auto bg-offwhite p-4">
+      <div ref={history} role="log" aria-label={`Messages with ${driver.name}`} className="flex h-72 flex-col gap-3 overflow-y-auto bg-inset p-4">
         {messages.map((message) => {
           const sentByPassenger = message.from === "passenger";
           return (
-            <div key={message.id} className={`max-w-[85%] rounded-xl px-4 py-3 [overflow-wrap:anywhere] ${sentByPassenger ? "self-end bg-maroon text-white" : "self-start border border-line bg-white"}`}>
+            <div key={message.id} className={`max-w-[85%] rounded-xl px-4 py-3 [overflow-wrap:anywhere] ${sentByPassenger ? "self-end border border-line bg-hover text-white" : "self-start border border-line bg-surface"}`}>
               <p className="whitespace-pre-wrap">{message.text}</p>
               <time className="mt-1 block text-xs opacity-80" dateTime={new Date(message.sentAt).toISOString()}>
                 {new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(message.sentAt)}

@@ -2,21 +2,24 @@
 
 @theme {
   --color-maroon: #500000;
-  --color-line: #eaeaea;
-  --color-offwhite: #f6f5f3;
-  --color-ink: #111111;
-  --color-muted: #595551;
-  --color-tint: #f6eded;
+  --color-line: #a15c65;
+  --color-inset: #62101e;
+  --color-surface: #701b29;
+  --color-hover: #852a39;
+  --color-ink: #fff5f6;
+  --color-muted: #f2ccd1;
+  --color-tint: #852a39;
 }
 
 body {
-  background: var(--color-offwhite);
+  background: var(--color-maroon);
   color: var(--color-ink);
+  color-scheme: dark;
   font-family: system-ui, sans-serif;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-maroon);
+  outline: 2px solid var(--color-ink);
   outline-offset: 3px;
 }
 
@@ -30,29 +33,42 @@ body {
 }
 
 .panel {
-  @apply rounded-2xl border border-line bg-white shadow-sm;
+  @apply rounded-2xl border border-line bg-surface;
 }
 
 .app-nav {
-  @apply fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-line bg-white;
+  @apply fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-line bg-maroon;
   padding-block-end: env(safe-area-inset-bottom);
 }
 
 .app-nav button {
-  @apply flex min-h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-1 text-center text-[0.6875rem] font-semibold text-muted hover:bg-offwhite sm:text-sm;
+  @apply flex min-h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-1 text-center text-[0.6875rem] font-semibold text-muted hover:bg-hover sm:text-sm;
 }
 
 .app-nav button[aria-current="page"] {
-  @apply bg-tint text-maroon;
+  @apply bg-tint text-white;
 }
 
 @media (min-width: 64rem) {
   .app-nav {
-    @apply static flex gap-1 border-0 p-0;
+    @apply static flex gap-1 border-0 bg-transparent p-0;
   }
 
   .app-nav button {
     @apply min-h-10 flex-row gap-2 px-3;
+  }
+
+  .app-nav button,
+  .app-nav button[aria-current="page"] {
+    @apply text-white hover:bg-white/10;
+  }
+
+  .app-nav button svg {
+    display: none;
+  }
+
+  .app-nav button[aria-current="page"] {
+    box-shadow: inset 0 -2px white;
   }
 
   .app-frame {
@@ -66,11 +82,11 @@ body {
 }
 
 .primary {
-  @apply bg-maroon text-white hover:bg-[#6a0000] disabled:hover:bg-maroon;
+  @apply border border-muted bg-hover text-white hover:bg-surface disabled:hover:bg-hover;
 }
 
 .secondary {
-  @apply border border-line bg-white text-ink hover:bg-offwhite;
+  @apply border border-line bg-surface text-ink hover:bg-hover;
 }
 
 .field-label {
@@ -78,7 +94,7 @@ body {
 }
 
 .field {
-  @apply flex min-h-11 min-w-0 items-center gap-2 rounded-lg border border-line bg-offwhite px-3 text-ink focus-within:border-maroon;
+  @apply flex min-h-11 min-w-0 items-center gap-2 rounded-lg border border-line bg-inset px-3 text-ink focus-within:border-muted;
 }
 
 .field-label .field {
@@ -111,21 +127,39 @@ body {
 .ride-map {
   position: relative;
   isolation: isolate;
-  height: clamp(17rem, 52vw, 30rem);
-  background: var(--color-offwhite);
+  height: clamp(17rem, 42vw, 36rem);
+  background: var(--color-maroon);
 }
 
 .ride-map-marker {
-  @apply whitespace-nowrap rounded-full border border-maroon bg-white px-2.5 py-1 text-xs font-semibold text-maroon shadow-sm;
+  @apply whitespace-nowrap rounded-full border border-maroon bg-maroon px-2.5 py-1 text-xs font-semibold text-white shadow-sm;
 }
 
 .ride-map-marker[data-role="Pickup"],
 .ride-map-marker[data-selected="true"] {
-  @apply bg-maroon text-white;
+  @apply border-muted bg-hover text-white;
 }
 
 .ride-map-marker[data-selected="true"] {
-  @apply z-10 ring-2 ring-white;
+  @apply z-10 ring-2 ring-muted;
+}
+
+.ride-map .maplibregl-ctrl-group,
+.ride-map .maplibregl-ctrl-attrib {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.ride-map .maplibregl-ctrl-group button:hover {
+  background: var(--color-hover);
+}
+
+.ride-map .maplibregl-ctrl-group .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+.ride-map .maplibregl-ctrl-attrib a {
+  color: var(--color-ink);
 }
 
 .ride-map .maplibregl-ctrl-attrib {

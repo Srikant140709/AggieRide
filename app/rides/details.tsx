@@ -27,11 +27,11 @@ export function RideDetails({ ride, passengers, requested, onClose, onMessage, o
         <button className="secondary !p-2" aria-label="Close ride details" onClick={onClose}><X size={20} aria-hidden="true" /></button>
       </div>
       <p className="mt-4 text-muted">{ride.driver.bio}</p>
-      <section className="mt-5 rounded-xl bg-offwhite p-4">
+      <section className="mt-5 rounded-xl bg-inset p-4">
         <h3 className="mb-3 font-bold">Trip details</h3>
         <TripDetails ride={ride} />
         <h4 className="mt-3 font-semibold">Expense-sharing estimate</h4>
-        <p className="mt-1 font-bold text-maroon">${ride.expenseShare} estimated per passenger · ${ride.expenseShare * passengers} estimated for {passengers} {passengers === 1 ? "passenger" : "passengers"}</p>
+        <p className="mt-1 font-bold text-muted">${ride.expenseShare} estimated per passenger · ${ride.expenseShare * passengers} estimated for {passengers} {passengers === 1 ? "passenger" : "passengers"}</p>
         <p className="mt-2 text-sm text-muted">Participants would arrange any reimbursement independently, outside AggieRide.</p>
       </section>
       <section className="mt-5">

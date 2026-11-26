@@ -12,10 +12,10 @@ export type Section = (typeof sections)[number]["id"];
 
 export function Navigation({ active, onNavigate }: { active: Section; onNavigate: (section: Section) => void }) {
   return (
-    <header className="border-b border-line bg-white">
-      <div className="shell flex min-h-16 items-center justify-between gap-4">
-        <button className="inline-flex items-center gap-2 text-xl font-extrabold tracking-tight text-maroon" onClick={() => onNavigate("find")}>
-          <span className="rounded-lg bg-maroon p-2 text-white"><CarFront size={21} aria-hidden="true" /></span>
+    <header className="border-b border-maroon bg-maroon text-white">
+      <div className="shell flex min-h-14 items-center justify-between gap-4">
+        <button className="inline-flex cursor-pointer items-center gap-2 focus-visible:outline-white text-lg font-bold tracking-tight text-white" onClick={() => onNavigate("find")}>
+          <CarFront size={20} aria-hidden="true" />
           AggieRide
         </button>
         <nav aria-label="Main navigation" className="app-nav">

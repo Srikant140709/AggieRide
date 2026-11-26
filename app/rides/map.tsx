@@ -206,18 +206,18 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
     <aside className="panel overflow-hidden" aria-labelledby="ride-map-title">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
         <h2 id="ride-map-title" className="flex items-center gap-2 font-bold">
-          <Route size={18} className="text-maroon" aria-hidden="true" /> Ride map
+          <Route size={18} className="text-muted" aria-hidden="true" /> Ride map
         </h2>
         <div className="flex flex-wrap gap-3 text-xs font-semibold text-muted">
-          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-maroon" /> Pickup</span>
-          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full border border-maroon bg-white" /> Destination</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full border border-muted bg-hover" /> Pickup</span>
+          <span className="flex items-center gap-1.5"><span className="size-2 rounded-full border border-muted bg-maroon" /> Destination</span>
         </div>
       </div>
       <div className="ride-map">
         {/* Match the panel height even when MapLibre applies its own container positioning. */}
         <div ref={container} style={{ width: "100%", height: "100%" }} />
         {status !== "ready" && (
-          <div className="absolute inset-x-3 bottom-10 z-10 flex flex-wrap items-center gap-2 rounded-lg border border-line bg-white p-3 shadow-sm">
+          <div className="absolute inset-x-3 bottom-10 z-10 flex flex-wrap items-center gap-2 rounded-lg border border-line bg-surface p-3 shadow-sm">
             <p className="text-sm text-muted" role="status">{statusText[status]}</p>
             {status !== "loading" && (
               <button className="secondary" onClick={() => {
@@ -232,7 +232,7 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
       {selectedRide && (
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-tint px-5 py-3">
           <div role="status">
-            <p className="font-semibold text-maroon">Approximate route preview</p>
+            <p className="font-semibold text-muted">Approximate route preview</p>
             <p className="text-sm text-muted">{selectedRide.pickup} → {selectedRide.destination} · Straight line between city centers</p>
           </div>
           <button className="secondary" onClick={onClearRoute}>Clear route</button>
@@ -243,7 +243,7 @@ export function RideMap({ rides, selectedRide, initialSearch, onClearRoute }: {
           <>
             <span className="text-sm font-semibold">Matching destinations</span>
             {[...new Set(rides.map((ride) => ride.destination))].map((city) => (
-              <span key={city} className="rounded-full bg-offwhite px-3 py-1 text-sm text-muted">{city}</span>
+              <span key={city} className="rounded-full bg-inset px-3 py-1 text-sm text-muted">{city}</span>
             ))}
           </>
         ) : <span className="text-sm text-muted">No matching destinations</span>}

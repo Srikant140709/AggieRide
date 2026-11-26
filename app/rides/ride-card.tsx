@@ -5,7 +5,7 @@ import type { Driver, Ride } from "./types";
 export function DriverRating({ driver }: { driver: Driver }) {
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5 text-sm text-muted">
-      <Star size={14} className="fill-maroon text-maroon" aria-hidden="true" />
+      <Star size={14} className="fill-muted text-muted" aria-hidden="true" />
       <strong className="text-ink">{driver.rating.toFixed(1)}</strong> ({driver.reviewCount} reviews)
     </span>
   );
@@ -30,23 +30,35 @@ export function RideCard({ ride, onView, onMessage, previewed, onPreview }: {
   onMessage: (driver: Driver) => void;
 }) {
   return (
-    <article className={`panel p-4 sm:p-5 ${previewed ? "ring-2 ring-maroon" : ""}`}>
-      <div className="mb-4 flex items-center gap-3 border-b border-line pb-4">
-        <div className="rounded-xl bg-tint p-3 text-maroon"><CarFront size={21} aria-hidden="true" /></div>
-        <div>
-          <h3 className="font-bold">{ride.driver.name}</h3>
-          <DriverRating driver={ride.driver} />
+    <article className={`panel p-4 ${previewed ? "border-muted ring-1 ring-muted" : ""}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-lg font-bold tracking-tight">To {ride.destination}</h3>
+          <p className="mt-0.5 text-sm text-muted">From {ride.pickup}</p>
         </div>
-        <div className="ml-auto shrink-0 text-right">
-          <p className="text-xl font-bold text-maroon">${ride.expenseShare}</p>
-          <p className="text-sm text-muted">est. per person</p>
+        <div className="shrink-0 text-right">
+          <p className="text-lg font-bold tabular-nums text-ink">${ride.expenseShare}</p>
+          <p className="text-xs text-muted">est. per person</p>
         </div>
       </div>
-      <TripDetails ride={ride} />
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+        <span className="inline-flex items-center gap-1.5"><Clock3 size={15} aria-hidden="true" /> {formatDate(ride.date)} · {formatTime(ride.time)}</span>
+        <span className="inline-flex items-center gap-1.5"><Users size={15} aria-hidden="true" /> {ride.seats} {ride.seats === 1 ? "seat" : "seats"}</span>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
+        <div>
+          <p className="text-sm font-semibold">{ride.driver.name} <span className="font-normal text-muted">· {ride.vehicle}</span></p>
+          <DriverRating driver={ride.driver} />
+        </div>
         <button className="primary" onClick={onView}>View ride</button>
-        <button className="secondary" aria-pressed={previewed} onClick={onPreview}><Route size={16} aria-hidden="true" /> Preview route</button>
-        <button className="secondary" onClick={() => onMessage(ride.driver)}><MessageCircle size={16} aria-hidden="true" /> Message driver</button>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        <button className="inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-sm font-medium text-muted hover:underline aria-pressed:underline" aria-pressed={previewed} onClick={onPreview}>
+          <Route size={16} aria-hidden="true" /> Preview route
+        </button>
+        <button className="inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-sm font-medium text-muted hover:underline" onClick={() => onMessage(ride.driver)}>
+          <MessageCircle size={16} aria-hidden="true" /> Message driver
+        </button>
       </div>
     </article>
   );
